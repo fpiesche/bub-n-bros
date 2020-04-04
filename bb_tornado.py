@@ -185,7 +185,7 @@ class GameSocketHandler(tornado.websocket.WebSocketHandler):
         print("closing connexion")
         gamesrv.clients.remove(self)
         self.gs_closed = True
-        for p in self.gs_players.values():
+        for p in list(self.gs_players.values()):
             p._playerleaves()
         if not gamesrv.clients and gamesrv.game is not None:
             gamesrv.game.FnDisconnected()
