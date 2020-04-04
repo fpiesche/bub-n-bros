@@ -81,6 +81,6 @@ from Sebastian Wegner's "Bub & Bob" redistributed under permission granted to pa
     [HTML5 port](https://bitbucket.org/arigo/bub-n-bros))
   * [Original Bub-n-Bros contributors](http://bub-n-bros.sourceforge.net/authors.html):
     * David Gowers (art)
-    * Gio, Odie, Michel-St�phane, Armin (levels)
+    * Gio, Odie, Michel-Stéphane, Armin (levels)
     * Odie, Brachamutanda (special thanks)
     * IMA Connection (beta testing)
