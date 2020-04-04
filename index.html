@@ -1,0 +1,361 @@
+<html>
+<head>
+</head>
+<body onload="load()" bgcolor="#808080" fgcolor="#000000" link="#3030FF"
+      vlink="#4040FF">
+    <table width=100%>
+    <tr>
+    <td><div id="player_icon"></div></td>
+    <td width=100%><center><canvas id="cnv" style="border:1px solid #000000;">
+            A modern HTML5 browser is required!</canvas></center></td>
+    </tr>
+    </table>
+    <center><i>
+    <div id="change_levels">
+    </div>
+    </i></center>
+    <script>
+
+bitmaps = {}
+icons = []
+musics = {}
+samples = {}
+defkeys = []
+keydefinition = null
+activekeys = {}
+playerstate = {}
+currentmusic = undefined
+
+function fix_music_index(i)
+{
+    return 2 + i * 2 + ogg_mpeg_shift;
+}
+
+function next_music()
+{
+    if (currentmusic)
+        currentmusic.pause()
+    var filename = current_music_tracks[fix_music_index(current_music_index)]
+    if (!filename) {
+        current_music_index = parseInt(current_music_tracks[1])
+        filename = current_music_tracks[fix_music_index(current_music_index)]
+        if (!filename)
+            return;
+    }
+    current_music_index += 1
+    var music = musics[filename]
+    if (!music) {
+        music = musics[filename] = new Audio();
+        music.src = filename;
+        music.onended = next_music
+    }
+    currentmusic = music
+    if (music.readyState >= 4)
+        music.currentTime = 0
+    music.play()
+}
+
+handlers = {
+    init: function(message) {
+        console.log("starting: playfield " + message[1] + " x " + message[2]);
+        canvas = document.getElementById('cnv');    // initialize global
+        canvas.width = message[1];
+        canvas.height = message[2];
+        ctx = canvas.getContext('2d');
+    },
+    ico: function(message) {
+        var filename = message[1]
+        var bitmap = bitmaps[filename]
+        if (!bitmap) {
+            bitmap = bitmaps[filename] = new Image();
+            bitmap.src = filename;
+        }
+        var code = parseInt(message[2]);
+        icons[code] = {
+            bitmap: bitmap,
+            x: parseInt(message[3]),
+            y: parseInt(message[4]),
+            w: parseInt(message[5]),
+            h: parseInt(message[6]),
+        }
+    },
+    music: function(message) {
+        current_music_tracks = message
+        current_music_index = 0
+        next_music();
+    },
+    def_key: function(message) {
+        defkeys.push(message)
+    },
+    changelevels: function(message) {
+        var div = document.getElementById("change_levels")
+        div.innerHTML = message[1]
+    },
+    player_icon: function(message) {
+        var player_id = message[1]
+        var ico = icons[parseInt(message[2])]
+        var state = {in_game: false, local: false}
+        var div = document.getElementById("player_icon")
+        var button = document.createElement("input")
+        button.type = "submit"
+        button.value = ""
+        button.style.width = ico.w * 3.5
+        button.style.height = ico.h * 1.2
+
+        var ready = function() {
+            var standard_image = function () {
+                button.value = ""
+                button.style.backgroundRepeat = "no-repeat"
+                button.style.backgroundPosition = "center center"
+                icon_to_backgroundimage(ico, button)
+            }
+            standard_image()
+
+            button.onclick = function () {
+                if (playerstate[player_id] == 'l') {
+                    ws.send("remove_player`" + player_id)
+                    return;
+                }
+                if (keydefinition == state) {
+                    keydefinition = null;
+                    standard_image();
+                    return;
+                }
+                button.style.backgroundPosition = "right center"
+
+                var animation = function (ping) {
+                    if (keydefinition != state) {
+                        standard_image()
+                        return;
+                    }
+                    if (!ping)
+                        return;
+                    var defkey = defkeys[state.defined_keys.length]
+                    if (defkey[1][0] == '-') {
+                        var n = state.defined_keys.length
+                        for (var k = 0; k < n; k++) {
+                            activekeys[state.defined_keys[k]] = {
+                                down: "key`" + player_id + "`" + k,
+                                up: "key`" + player_id + "`" + (k + n),
+                                player_id: player_id
+                            }
+                        }
+                        keydefinition = null
+                        standard_image()
+                        ws.send("add_player`" + player_id)
+                        return;
+                    }
+                    button.value = defkey[1] + ':'
+                    var nextico = defkey[state.nextico]
+                    if (!nextico) {
+                        state.nextico = 2
+                        nextico = defkey[state.nextico]
+                    }
+                    state.nextico += 1
+                    var ico1 = icons[parseInt(nextico)]
+                    icon_to_backgroundimage(ico1, button)
+                    if (!state.timer) {
+                        state.timer = true
+                        setTimeout(timer_elapsed, 200)
+                    }
+                    button.blur()
+                }
+
+                var timer_elapsed = function () {
+                    state.timer = false
+                    animation(true)
+                }
+
+                state.nextico = 2
+                state.defined_keys = []
+                state.animation = animation
+                state.timer = false
+                var oldkeydefinition = keydefinition
+                keydefinition = state
+                animation(true)
+
+                document.onkeydown = keydown_handler
+                document.onkeyup = keyup_handler
+                if (oldkeydefinition != null)
+                    oldkeydefinition.animation()
+            }
+        }
+        if (ico.bitmap.complete) {
+            ready()
+        }
+        else {
+            ico.bitmap.onload = ready
+        }
+        div.appendChild(button)
+    },
+    player_join: function(message) {
+        player_id = message[1]
+        local = parseInt(message[2])
+        if (local) {
+            playerstate[player_id] = 'l'
+        }
+        else {
+            playerstate[player_id] = 1
+        }
+    },
+    player_kill: function(message) {
+        player_id = message[1]
+        playerstate[player_id] = 0
+        console.log(activekeys)
+        while (1) {
+            retry = false;
+            for (var a in activekeys) {
+                if (activekeys[a].player_id == player_id) {
+                    delete activekeys[a];
+                    retry = true;
+                    break;
+                }
+            }
+            if (!retry)
+                break;
+        }
+        console.log(activekeys)
+    },
+    play: function(message) {
+        var filename = message[1 + ogg_mpeg_shift]
+        var sample = samples[filename]
+        if (!sample) {
+            /* prepare every sample twice, to allow some concurrent playing */
+            var s0 = new Audio();
+            var s1 = new Audio();
+            sample = samples[filename] = [s0, s1]
+            s0.src = filename
+            s1.src = filename
+            s1.onloadeddata = function () {
+                s1.play()
+            }
+        }
+        else {
+            var s0 = sample[0]
+            var s1 = sample[1]
+            s0.play()
+            sample[0] = s1
+            sample[1] = s0
+        }
+    },
+}
+
+function icon_to_backgroundimage(ico, button)
+{
+    var canvas1 = document.createElement("canvas")
+    canvas1.width = ico.w
+    canvas1.height = ico.h
+    var ctx1 = canvas1.getContext('2d')
+    ctx1.drawImage(ico.bitmap, ico.x, ico.y, ico.w, ico.h,
+                   0, 0, ico.w, ico.h)
+    button.style.backgroundImage = "url('" + canvas1.toDataURL() + "')"
+}
+
+function keydown_handler(e)
+{
+    e = e || window.event
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey)
+        return;
+
+    var k = activekeys[e.keyCode]
+    if (k) {
+        ws.send(k.down)
+        e.preventDefault()
+        return false;
+    }
+    else if (keydefinition) {
+        e.preventDefault()
+        for (var i = 0; i < keydefinition.defined_keys.length; i++)
+            if (keydefinition.defined_keys[i] == e.keyCode)
+                return false;
+        keydefinition.defined_keys.push(e.keyCode)
+        keydefinition.animation()
+        return false;
+    }
+}
+
+function keyup_handler(e)
+{
+    e = e || window.event
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey)
+        return;
+
+    var k = activekeys[e.keyCode]
+    if (k) {
+        ws.send(k.up)
+        e.preventDefault()
+        return false;
+    }
+}
+
+prev_drawing = "";
+
+function draw(drawing) {
+    ctx.fillStyle = "black"
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    drawing = (prev_drawing.slice(0, drawing.charCodeAt(1) - 1) +
+               drawing.slice(2))
+
+    for (var i = 0; i < drawing.length; i += 3) {
+        var x = drawing.charCodeAt(i) - 701
+        var y = drawing.charCodeAt(i + 1) - 701
+        var ico = icons[drawing.charCodeAt(i + 2)]
+        if (ico) {
+            ctx.drawImage(ico.bitmap, ico.x, ico.y, ico.w, ico.h,
+                          x, y, ico.w, ico.h)
+
+            // firefox (at least 34.0.5) doesn't always correctly
+            // z-order the whole sprite images, unless we force the
+            // canvas to be "ordered" with this hack:
+            if (firefox_workaround)
+                firefox_workaround.drawImage(canvas, 0, 0)
+        }
+        else {
+            console.log(drawing[i]);
+        }
+    }
+    prev_drawing = drawing
+}
+
+function changelevels(lvl)
+{
+    ws.send("change_levels`" + lvl)
+}
+
+function load()
+{
+    ws = new WebSocket("ws://" + location.host + "/gamesocket");
+
+    ws.onmessage = function(evt) {
+        if (evt.data[0] == 'D')
+            draw(evt.data);
+        else {
+            var message = evt.data.split('`');
+            handlers[message[0]](message);
+        }
+    };
+
+    var au = new Audio();
+    var can_play_ogg = au.canPlayType('audio/ogg');
+    var can_play_mpeg = au.canPlayType('audio/mpeg');
+    console.log("can play audio/ogg = '" + can_play_ogg +
+                "'; audio/mpeg = '" + can_play_mpeg + "'");
+    if (can_play_ogg == "probably" || can_play_mpeg == "")
+        ogg_mpeg_shift = 0;
+    else
+        ogg_mpeg_shift = 1;
+
+    firefox_workaround = undefined
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+        /* firefox has troubles creating a canvas with a lot of overlapping
+           drawImage().  As a workaround, we synchronize the canvas after
+           each drawImage() by copying one pixel of it here: */
+        var canvas2 = document.createElement("canvas")
+        canvas2.width = 1
+        canvas2.height = 1
+        firefox_workaround = canvas2.getContext('2d')
+    }
+}
+    </script>
+</body>
+</html>

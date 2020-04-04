@@ -1,0 +1,82 @@
+(defun symm (arg)
+  (interactive "p")
+  (while (> arg 0)
+    (beginning-of-line)
+    (let ((p1 (point)))
+      (end-of-line)
+      (let* ((p2 (point))
+             (s (buffer-string p1 p2))
+             (i 0)
+             (j (- (length s) 1)))
+        (while (< i j)
+          (aset s j (aref s i))
+          (setq i (+ i 1))
+          (setq j (- j 1)))
+        (delete-region p1 p2)
+        (insert-string s)
+        (forward-line 1)))
+    (setq arg (- arg 1))))
+
+class levelXX(boarddef.Level):
+    n = LNasty
+    m = LMonky
+    g = LGhosty
+    f = LFlappy
+    s = LSpringy
+    o = LOrcy
+    r = LGramy
+    b = LBlitzy
+    
+    walls = """
+#############################
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+##                         ##
+#############################
+"""   #|#    #|#    #|#   """
+
+    winds = """
+>>                         <<
+>>>>>>>>>>>>>xxx<<<<<<<<<<<<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+>>^                       ^<<
+"""

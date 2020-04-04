@@ -1,0 +1,95 @@
+<html>
+<head><title>The Bub's Brothers Server List</title>
+</head>
+<body onload="load()" text="#000000" bgcolor="#C0FFC0" link="#0000EE" vlink="#000099" alink="#FF0000">
+
+<center>
+<h1>The Bub's Brothers Server List</h1>
+
+<table border=1 cellspacing=1>
+<tr><td bgcolor="#FFFFFF">
+<table border=0 cellspacing=6>
+<tr>
+  <td bgcolor="#008000" colspan=2 align="center">
+    <a href="javascript:location.reload()">
+      <img id="myicon" src="static/mbub.png" /></a>
+  <font color="#FFFF00" size=+1><strong>&nbsp;&nbsp;&nbsp;Running servers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></font></td>
+</tr>
+
+<tr>
+  <td>&nbsp;</td>
+  <td>&nbsp;</td>
+</tr>
+
+<tr>
+  <td>&nbsp;</td>
+  <td bgcolor="#FFFFFF"><table id="tabl" border=0 cellspacing=5>
+    <td><td>Loading...<br><font size=-1>If nothing happens, your browser does not support HTML5 WebSockets.</font></td></tr>
+  </table></td>
+</tr>
+
+</table>
+</td></tr></table>
+<br>
+<table>
+<tr><td><img src="static/home.png"> Works on HTML5 web browsers (most recent browsers should do).</td></tr>
+<tr><td><img src="static/home.png"> Chat about the Bub's Brothers?  Go to our IRC channel <a href="irc://irc.freenode.net:6667/bub-n-bros">#bub-n-bros on irc.freenode.net</a>.</td></tr>
+<tr><td><img src="static/home.png"> The Bub's Brothers Source Code is <a href="http://bitbucket.org/arigo/bub-n-bros">hosted on bitbucket</a>.  Grab it to run your own servers.</td></tr>
+</table>
+</center>
+<script>
+
+function getcolorname(start, end, x)
+{
+    var r = Math.round(start.r * (1-x) + end.r * x)
+    var g = Math.round(start.g * (1-x) + end.g * x)
+    var b = Math.round(start.b * (1-x) + end.b * x)
+    return 'rgb(' + r + ',' + g + ',' + b + ')'
+}
+
+function load()
+{
+    ws = new WebSocket("ws://" + location.host + "/client")
+
+    var tabl = document.getElementById('tabl')
+    var initial = true
+
+    ws.onmessage = function(evt) {
+        var done = function() {
+            document.body.style.background = "#C0FFC0"
+            document.body.style.color = "#000000"
+            tabl.innerHTML = evt.data
+        }
+        var animation = 0.0
+        var animate = function() {
+            if (animation < 1.0) {
+                document.body.style.background = getcolorname(
+                    {r: 0xFF, g: 0xFF, b: 0xC0},
+                    {r: 0xC0, g: 0xFF, b: 0xC0},
+                    animation)
+                document.body.style.color = getcolorname(
+                    {r: 0xA0, g: 0xA0, b: 0xA0},
+                    {r: 0xA0, g: 0x00, b: 0x00},
+                    animation)
+                animation += 0.1
+                window.setTimeout(animate, 60)
+            }
+            else
+                done()
+        }
+        if (initial) {
+            initial = false
+            done()
+            document.getElementById('myicon').src = "static/mbuba.gif"
+            ws.onclose = function() {
+                document.getElementById('myicon').src = "static/mbub.png"
+            }
+        }
+        if (evt.data[0] == ' ')
+            animate()
+        else
+            done()
+    }
+}
+</script>
+</body></html>
