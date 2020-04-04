@@ -68,13 +68,19 @@ them from a central location. You can start a metaserver by running `python meta
 Individual game servers can then add your metaserver's URL to their `--metaserver` command-line
 to be listed there. There is currently no default metaserver.
 
+## License
+
+Bub-n-Bros is licensed under the [MIT License](https://opensource.org/licenses/MIT). Assets
+from Sebastian Wegner's "Bub & Bob" redistributed under permission granted to parent project.
+
 ## Acknowledgments
 
-  * [Sebastian Wegner](http://www.mcsebi.com/) (original MacOS game "Bub & Bob" which many of the assets in Bub-n-Bros are from)
+  * [Sebastian Wegner](http://www.mcsebi.com/) (original MacOS game "Bub & Bob" which many of
+    the assets in Bub-n-Bros are from)
   * Armin Rigo ([original Python code](https://bub-n-bros.sourceforge.net) and
-  [HTML5 port](https://bitbucket.org/arigo/bub-n-bros))
+    [HTML5 port](https://bitbucket.org/arigo/bub-n-bros))
   * [Original Bub-n-Bros contributors](http://bub-n-bros.sourceforge.net/authors.html):
     * David Gowers (art)
-    * Gio, Odie, Michel-StÃ©phane, Armin (levels)
+    * Gio, Odie, Michel-St‚phane, Armin (levels)
     * Odie, Brachamutanda (special thanks)
     * IMA Connection (beta testing)
