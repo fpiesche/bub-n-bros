@@ -16,7 +16,7 @@ from tornado.options import define, options
 define("port", default=8000, help="run on the given port", type=int)
 define("level", default='CompactLevels.py', type=str,
        help="Levels to play (can also be changed before the game starts)")
-define("metaserver", default="buildbot.pypy.org:8888", type=str,
+define("metaserver", default=None, type=str,
        help="Metaserver to use, or 'none'")
 define("upnp", default=False, type=bool, help='Whether to open the port via UPNP when launching.')
 define("hostname", default=None, type=str,
@@ -67,9 +67,8 @@ class Application(tornado.web.Application):
                 client.gs_update_drawing(msg)
 
     def prepare_metaserver_connection(self):
-        if options.metaserver.lower() in ('','none','0','off','no','false'):
-            return
-        self.metaserver_url = 'http://%s/' % (options.metaserver,)
+        if options.metaserver:
+            self.metaserver_url = options.metaserver
 
         def notify_metaserver(**query):
             query['d'] = gamesrv.game.FnDesc
