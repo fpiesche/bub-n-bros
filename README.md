@@ -4,6 +4,11 @@ This is a fork of [Armin Rigo's HTML5 port](https://bitbucket.org/arigo/bub-n-br
 [Bub's Brothers](http://bub-n-bros.sourceforge.net/), ported to Python 3 since Python 2.x
 is now end-of-life and with plans for other enhancements (see the Issues page).
 
+## Reporting Issues
+
+This project is work in progress and the Python 3 port especially is still extremely experimental.
+Please report any issues you find on [the BitBucket Issue tracker](https://bitbucket.org/fpiesche/bub-n-bros/issues/)
+
 ## Requirements
 
   * Python 3.x (I personally develop and test on Python 3.7). On Windows, I recommend installing
