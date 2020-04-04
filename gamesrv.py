@@ -1,6 +1,6 @@
-import os, bubbob, hashlib
+import os, hashlib
 
-BB_DIR = os.path.dirname(bubbob.__file__)
+BB_DIR = os.path.join(os.path.dirname(__file__), 'bubbob')
 
 
 class Game:
@@ -93,8 +93,7 @@ def compactsprites(insert_new=None, insert_before=None):
             insert_before = None
     newsprites = ['']
     newd = {}
-    l = sprites_by_n.items()
-    l.sort()
+    l = sorted(sprites_by_n.items())
     for n, s in l:
         if n == insert_before:
             prevn = insert_new.alive
@@ -117,7 +116,7 @@ def _pack_msg(x, y, icocode):
     if y < -700: y = -700
     if x > 1300: x = 1300
     if y > 1300: y = 1300
-    return unichr(x + 701) + unichr(y + 701) + unichr(icocode)
+    return chr(x + 701) + chr(y + 701) + chr(icocode)
 
 def _unpack_msg(msg):
     return ord(msg[0]), ord(msg[1]), ord(msg[2])
@@ -271,7 +270,7 @@ class Bitmap(DataChunk):
 class MemoryBitmap(Bitmap):
     def __init__(self, data, colorkey=None):
         self.data = data
-        Bitmap.__init__(self, hashlib.md5(data).hexdigest(), colorkey)
+        Bitmap.__init__(self, hashlib.md5(data.encode('utf-8')).hexdigest(), colorkey)
 
     def read(self, slice=None):
         data = self.data
@@ -388,4 +387,4 @@ def set_musics(musics_intro, musics_loop, reset=1):
 
 def fadeout(time=1.0):
     # XXX
-    print "fadeout: not implemented"
+    print("fadeout: not implemented")

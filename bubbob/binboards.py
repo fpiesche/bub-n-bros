@@ -21,7 +21,8 @@ def meancolor(img):
             b1 += b
     return r1/count, g1/count, b1/count
 
-def addshadow(img, (r1, g1, b1), depth=8):
+def addshadow(img, base_colour, depth=8):
+    r1, g1, b1 = base_colour
     w = len(img[0])
     h = len(img)
     pad = depth * [keycol]
@@ -36,7 +37,8 @@ def addshadow(img, (r1, g1, b1), depth=8):
             result[1+d+i][w+d] = color
     return result
 
-def addrshadow(img, (r1, g1, b1), depth=8):
+def addrshadow(img, base_colour, depth=8):
+    r1, g1, b1 = base_colour
     w = len(img[0])
     h = len(img)
     pad = depth * [keycol]
@@ -50,7 +52,7 @@ def addrshadow(img, (r1, g1, b1), depth=8):
 
 
 def load(filename):
-    print "Loading %s..." % filename
+    print("Loading %s..." % filename)
     Bin = macbinary.MacBinary(os.path.join(gamesrv.BB_DIR, filename))
     levels = {}
     mnstrlist = [Nasty, Monky, Ghosty, Flappy,

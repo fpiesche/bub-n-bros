@@ -123,7 +123,7 @@ class Dragon(ActiveSprite):
                            outcome=bonus.buildoutcome())
         elif self.bubber.letters and random.random() > 0.59 and can_loose_letter:
             # loose a letter
-            lst = range(6)
+            lst = list(range(6))
             random.shuffle(lst)
             for l in lst:
                 lettername = bubbles.extend_name(l)
@@ -155,7 +155,7 @@ class Dragon(ActiveSprite):
         timeout += BubPlayer.FrameCounter
         lst = list(self.dcap['carrying'])
         lst.append((timeout, bonus))
-        lst.sort()
+        lst.sort(key=lambda sortbonus: sortbonus[0])
         self.dcap['carrying'] = lst
 
     def listcarrybonuses(self):
@@ -771,6 +771,36 @@ class BubPlayer(gamesrv.Player):
             for key, value in self.iconnames.items():
                 icons[key] = images.sprget((flip, value))
 
+    def __eq__(self, other):
+        try:
+            return self.pn == other.pn
+        except AttributeError:
+            return False
+
+    def __lt__(self, other):
+        try:
+            return self.pn < other.pn
+        except AttributeError:
+            return False
+
+    def __le__(self, other):
+        try:
+            return self.pn <= other.pn
+        except AttributeError:
+            return False
+
+    def __gt__(self, other):
+        try:
+            return self.pn > other.pn
+        except AttributeError:
+            return False
+
+    def __ge__(self, other):
+        try:
+            return self.pn >= other.pn
+        except AttributeError:
+            return False
+
     def setplayername(self, name):
         name = name.strip()
         for t in [0, 1]:
@@ -793,9 +823,9 @@ class BubPlayer(gamesrv.Player):
             self.loadicons(flip='')
         self.keepalive = None
         if self.points or self.letters:
-            print 'New player continues at position #%d.' % n
+            print('New player continues at position #%d.' % n)
         else:
-            print 'New player is at position #%d.' % n
+            print('New player is at position #%d.' % n)
             self.reset()
         self.key_left  = 0
         self.key_right = 0
@@ -810,7 +840,7 @@ class BubPlayer(gamesrv.Player):
         #BubPlayer.LatestLetsGo = BubPlayer.FrameCounter
 
     def playerleaves(self):
-        print 'Closing position #%d.' % self.pn
+        print('Closing position #%d.' % self.pn)
         self.savecaps()
         self.zarkoff()
         self.keepalive = time.time() + KEEPALIVE
@@ -874,7 +904,7 @@ class BubPlayer(gamesrv.Player):
                     else:
                         break
             self.dragons.append(Dragon(self, x, y, dir))
-            for key in self.pcap.keys():
+            for key in list(self.pcap.keys()):
                 if key not in ('teleport', 'jumpdown'):
                     del self.pcap[key]
 
@@ -912,7 +942,7 @@ class BubPlayer(gamesrv.Player):
         setattr(self, dcap[key_name], value)
 
     def wannago(self, dcap):
-        return dcap['left2right'] * cmp(self.getkey(dcap, 'key_right'),
+        return dcap['left2right'] * self.cmp(self.getkey(dcap, 'key_right'),
                                         self.getkey(dcap, 'key_left'))
 
     def turn_single_shot(self, dcap):
@@ -924,6 +954,9 @@ class BubPlayer(gamesrv.Player):
         for name in ('key_left', 'key_right'):
             self.setkey(dcap, name, 0)
         return wannago
+
+    def cmp(self, a, b):
+        return (a > b) - (a < b)
 
     def givepoints(self, points):
         self.points += points

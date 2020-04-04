@@ -148,7 +148,7 @@ class ActiveSprite(gamesrv.Sprite):
             try:
                 for g in glist:
                     if self.alive:
-                        g.next()
+                        g.__next__()
             except StopIteration:
                 try:
                     self.gen.remove(g)
@@ -157,7 +157,7 @@ class ActiveSprite(gamesrv.Sprite):
                 for g in glist[glist.index(g)+1:]:
                     if self.alive:
                         try:
-                            g.next()
+                            g.__next__()
                         except StopIteration:
                             pass
             yield None
@@ -181,7 +181,7 @@ def action(sprlist, len=len):
         try:
             for g in glist:
                 if self.alive:
-                    g.next()
+                    g.__next__()
         except StopIteration:
             try:
                 self.gen.remove(g)
@@ -190,7 +190,7 @@ def action(sprlist, len=len):
             for g in glist[glist.index(g)+1:]:
                 if self.alive:
                     try:
-                        g.next()
+                        g.__next__()
                     except StopIteration:
                         pass
         if self.touchable and self.alive:
@@ -304,7 +304,8 @@ def loadpattern(n, keycol=None):
     bitmap = gamesrv.getbitmap(filename, keycol)
     return bitmap, rect
 
-def makebkgndpattern(bitmap, (x,y,w,h), darker={}):
+def makebkgndpattern(bitmap, dimensions, darker={}):
+    x, y, w, h = dimensions
     from boards import CELL
     try:
         nbitmap, hscale, vscale = darker[bitmap]
@@ -458,12 +459,12 @@ def generate_sprmap():
     if 0:    # --2015--
         file = os.path.join('images', 'buildcolors.py')
         g = {'__name__': '__auto__', '__file__': file}
-        execfile(file, g)
+        exec(open(file).read(), g)
     # replace the entries 'filename_%d.ppm' by a family of entries,
     # one for each color
     sprmap = {}
-    for n, (filename, rect) in (original_sprmap.items() +
-                                extramap.items() + hatmap.items()):
+    for n, (filename, rect) in (list(original_sprmap.items()) +
+                                list(extramap.items()) + list(hatmap.items())):
         if filename.find('%d') >= 0:
             for i in range(MAX):
                 sprmap[n+1000*i] = (os.path.join('images',filename % i), rect)

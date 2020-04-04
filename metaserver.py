@@ -90,11 +90,11 @@ class GameStatHandler(tornado.websocket.WebSocketHandler):
         self.gs_info['icon'] = random.choice(ICONS)
         self.gs_info['host_ip'] = self.request.remote_ip
         app.servers.append(self)
-        print 'new server on', self.gs_info['host_ip']
+        print('new server on', self.gs_info['host_ip'])
 
     def on_close(self):
         app.servers.remove(self)
-        print 'removed server from', self.gs_info['host_ip']
+        print('removed server from', self.gs_info['host_ip'])
         app.update_all_clients()
 
     def on_message(self, message):

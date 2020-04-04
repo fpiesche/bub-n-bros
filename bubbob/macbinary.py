@@ -105,10 +105,10 @@ class MacBinary:
 class Subfile:
     def __init__(self, f, start, length):
         if start < 0:
-            raise ValueError, 'negative position'
+            raise ValueError('negative position')
         if isinstance(f, Subfile):
             if start + length > f.length:
-                raise ValueError, 'subfile out of bounds'
+                raise ValueError('subfile out of bounds')
             f, start = f.f, f.start+start
         self.f = f
         self.start = start
@@ -124,7 +124,7 @@ class Subfile:
         return self.f.read(size)
     def seek(self, npos):
         if npos < 0:
-            raise ValueError, 'negative position'
+            raise ValueError('negative position')
         self.position = npos
 
 
@@ -186,7 +186,7 @@ class ppatResource(Resource):
         f = self.subfile()
         pattype, patmap, patdata = struct.unpack(">Hll", f.read(10))
         if pattype != 1:
-            raise ValueError, 'Pattern type not supported'
+            raise ValueError('Pattern type not supported')
         f.seek(patmap)
         (rowBytes, h, w, packType, packSize,
          pixelType, pixelSize, cmpCount, cmpSize, pmTable) = (
@@ -194,9 +194,9 @@ class ppatResource(Resource):
         isBitmap = (rowBytes & 0x8000) != 0
         rowBytes &= 0x3FFF
         if packType != 0:
-            raise ValueError, 'packed image not supported'
+            raise ValueError('packed image not supported')
         if pixelType != 0 or cmpCount != 1:
-            raise ValueError, 'direct RGB image not supported'
+            raise ValueError('direct RGB image not supported')
         assert cmpSize == pixelSize and pixelSize in [1,2,4,8]
         f.seek(pmTable)
         colormap = loadcolormap(f)

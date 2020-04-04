@@ -355,7 +355,7 @@ def GenerateSingleLevel(width, height):
 
 if __name__ == '__main__':
     for s in makeshapes():
-        print s.__dict__
+        print(s.__dict__)
 else:
     from gamesrv import BB_DIR
     rnglevel = {}

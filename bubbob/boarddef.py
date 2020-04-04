@@ -60,8 +60,8 @@ class Level(boards.Board):
             width = len(walls[0])
             height = len(walls)
             spaces = " " * (width-6)
-            lbar = '>'*(width/2-2)
-            rbar = '<'*(width/2-2)
+            lbar = '>' * int(width/2-2)
+            rbar = '<' * int(width/2-2)
             winds = ['>> ' + spaces + ' <<',
                           lbar + 'x'*(width-len(lbar)-len(rbar)) + rbar]
             winds += ['>>^' + spaces + '^<<'] * (height-2)

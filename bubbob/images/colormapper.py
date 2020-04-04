@@ -1,16 +1,16 @@
-import cStringIO
+import io
 
 def decodepixmap(data):
-    f = cStringIO.StringIO(data)
-    sig = f.readline().strip()
+    f = io.BytesIO(data)
+    sig = f.readline().decode().strip()
     assert sig == "P6"
     while 1:
-        line = f.readline().strip()
+        line = f.readline().decode().strip()
         if not line.startswith('#'):
             break
     wh = line.split()
     w, h = map(int, wh)
-    sig = f.readline().strip()
+    sig = f.readline().decode().strip()
     assert sig == "255"
     data = f.read()
     f.close()

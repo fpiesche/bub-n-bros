@@ -1,17 +1,17 @@
 from __future__ import generators
-import cStringIO
+import io
 
 def decodepixmap(data):
-    f = cStringIO.StringIO(data)
-    sig = f.readline().strip()
+    f = io.BytesIO(data)
+    sig = f.readline().decode().strip()
     assert sig == "P6"
     while 1:
-        line = f.readline().strip()
+        line = f.readline().decode().strip()
         if not line.startswith('#'):
             break
     wh = line.split()
     w, h = map(int, wh)
-    sig = f.readline().strip()
+    sig = f.readline().decode().strip()
     assert sig == "255"
     data = f.read()
     f.close()
@@ -20,7 +20,9 @@ def decodepixmap(data):
 def encodepixmap(w, h, data):
     return 'P6\n%d %d\n255\n%s' % (w, h, data)
 
-def cropimage((w, h, data), (x1, y1, w1, h1)):
+def cropimage(image, crop_region):
+    w, h, data = image
+    x1, y1, w1, h1 = crop_region
     assert 0 <= x1 <= x1+w1 <= w
     assert 0 <= y1 <= y1+h1 <= h
     scanline = w*3
@@ -68,9 +70,9 @@ def makebkgnd(w, h, data):
     for position in range(0, scanline*h, scanline):
         line = []
         for p in range(position, position+scanline, 3):
-            line.append(2 * (chr(ord(data[p  ]) >> 3) +
-                             chr(ord(data[p+1]) >> 3) +
-                             chr(ord(data[p+2]) >> 3)))
+            line.append(2 * (chr(data[p] >> 3) +
+                             chr(data[p+1] >> 3) +
+                             chr(data[p+2] >> 3)))
         line = ''.join(line)
         result.append(line)
         result.append(line)
@@ -80,10 +82,12 @@ translation_darker = ('\x00\x01' + '\x00'*126 +
                       ''.join([chr(n//4) for n in range(0,128)]))
 translation_dragon = translation_darker[:255] + '\xC0'
 
-def make_dark((w, h, data), translation):
+def make_dark(image, translation):
+    w, h, data = image
     return w, h, data.translate(translation)
 
-def col((r, g, b)):
+def col(colour):
+    r, g, b = colour
     r = ord(r)
     g = ord(g)
     b = ord(b)

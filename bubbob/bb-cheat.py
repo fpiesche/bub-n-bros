@@ -1,11 +1,9 @@
 #! /usr/bin/env python
 
 from __future__ import generators
-import __builtin__
 def __cheat(c):
     __cheat.clist.append(c)
 __cheat.clist = ['Donut']
-__builtin__.__cheat = __cheat
 
 # __________
 import os, sys
@@ -121,9 +119,9 @@ class BubBobGame(gamesrv.Game):
         if kbd and not [p for p in BubPlayer.PlayerList if p.isplaying()]:
             return 0
         import traceback
-        print "-"*60
+        print("-"*60)
         traceback.print_exc()
-        print "-"*60
+        print("-"*60)
         if not kbd:
             try:
                 if self.metaserver:
@@ -134,15 +132,15 @@ class BubBobGame(gamesrv.Game):
                     else:
                         if metaclient.metaclisrv:
                             metaclient.metaclisrv.send_traceback()
-            except Exception, e:
-                print '! %s: %s' % (e.__class__.__name__, e)
+            except Exception as e:
+                print('! %s: %s' % (e.__class__.__name__, e))
         import boards
         num = getattr(boards.curboard, 'num', None)
         if self.Quiet:
-            print "Crash recovery! Automatically restarting board %s" % num
+            print("Crash recovery! Automatically restarting board %s" % num)
             import time; time.sleep(2)
         else:
-            print "Correct the problem and leave pdb to restart board %s..."%num
+            print("Correct the problem and leave pdb to restart board %s..."%num)
             import pdb; pdb.post_mortem(sys.exc_info()[2])
         self.openboard(num)
         return 1
@@ -172,7 +170,7 @@ class BubBobGame(gamesrv.Game):
             setuppath('metaserver')
             import metaclient
             metaclient.meta_register(self)
-            print '.'
+            print('.')
         else:
             try:
                 import metaclient
@@ -190,8 +188,7 @@ class BubBobGame(gamesrv.Game):
 def setuppath(dirname):
     dir = os.path.abspath(os.path.join(LOCALDIR, os.pardir, dirname))
     if not os.path.isdir(dir):
-        print >> sys.stderr, (
-            '../%s: directory not found ("cvs update -d" ?)' % dirname)
+        print('../%s: directory not found ("cvs update -d" ?)' % dirname, file=sys.stderr)
         sys.exit(1)
     if dir not in sys.path:
         sys.path.insert(0, dir)
@@ -231,9 +228,8 @@ def parse_cmdline(argv):
                             ['metaserver', 'start=', 'step=',
                              'lives=', 'monsters=', 'infinite', 'help',
                              'saveurlto=', 'quiet', 'port=', 'makeimages'])
-    except error, e:
-        print >> sys.stderr, 'bb.py: %s' % str(e)
-        print >> sys.stderr
+    except error as e:
+        print('bb.py: %s%s' % (str(e), os.linesep), file=sys.stderr)
         usage()
         
     options = {}

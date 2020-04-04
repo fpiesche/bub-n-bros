@@ -127,14 +127,14 @@ class Shot(Bubble):
 
 
 class Alien(monsters.Monster):
-    ANGLES = 32
-    SPEED = 5
-    ANGLE_TABLE = [(SPEED * math.cos(a*2.0*math.pi/ANGLES),
-                    -SPEED * math.sin(a*2.0*math.pi/ANGLES))
-                   for a in range(ANGLES)]
-    touchable = 0
-    
+
     def __init__(self, galaga, squadron, rank, relativey):
+        self.ANGLES = 32
+        self.SPEED = 5
+        self.ANGLE_TABLE = [(self.SPEED * math.cos(a * 2.0 * math.pi / self.ANGLES),
+                        -self.SPEED * math.sin(a * 2.0 * math.pi / self.ANGLES))
+                       for a in range(self.ANGLES)]
+        touchable = 0
         centerx = boards.bwidth // 2
         go_left = squadron % 2
         dx = (1,-1)[go_left]
@@ -158,7 +158,9 @@ class Alien(monsters.Monster):
         self.in_place = 0
         galaga.nbmonsters += 1
 
-    def default_mode(self, angle=ANGLES//4):
+    def default_mode(self, angle=None):
+        if angle is None:
+            angle = self.ANGLES//4
         self.touchable = 1
         speed = self.SPEED
         relative, tx, ty = self.path[0]

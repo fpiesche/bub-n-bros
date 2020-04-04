@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-import os, urllib, socket
+import miniupnpc
+import socket
+from uuid import uuid1
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
@@ -16,6 +18,7 @@ define("level", default='CompactLevels.py', type=str,
        help="Levels to play (can also be changed before the game starts)")
 define("metaserver", default="buildbot.pypy.org:8888", type=str,
        help="Metaserver to use, or 'none'")
+define("upnp", default=True, type=bool, help='Whether to open the port via UPNP when launching.')
 define("hostname", default=None, type=str,
        help="Nickname published on the metaserver")
 
@@ -35,18 +38,18 @@ class Application(tornado.web.Application):
         self.periodic_callback = tornado.ioloop.PeriodicCallback(
             self.invoke_periodic_callback, 25)
         self.periodic_callback_is_running = False
-        self.metaserver_key = os.urandom(8).encode('hex')
+        self.metaserver_key = uuid1()
         self.prepare_metaserver_connection()
 
     def updated_client_list(self):
         if len(gamesrv.clients) == 0:
             if self.periodic_callback_is_running:
-                print "no more client, pausing"
+                print("no more client, pausing")
                 self.periodic_callback.stop()
                 self.periodic_callback_is_running = False
         else:
             if not self.periodic_callback_is_running:
-                print "starting periodic callback"
+                print("starting periodic callback")
                 self.periodic_callback.start()
                 self.periodic_callback_is_running = True
         return self.periodic_callback_is_running
@@ -119,7 +122,7 @@ class GameSocketHandler(tornado.websocket.WebSocketHandler):
         for i in range(min(len(prev_drawing), len(drawing), 0xC000)):
             if drawing[i] != prev_drawing[i]:
                 break
-        msg = u'D' + unichr(i + 1) + drawing[i:]
+        msg = u'D' + chr(i + 1) + drawing[i:]
         self.write_message(msg)
         self.update_changelevels()
 
@@ -165,7 +168,7 @@ class GameSocketHandler(tornado.websocket.WebSocketHandler):
             self.write_message("init`%d`%d" % board_size)
 
     def open(self):
-        print "opening connexion"
+        print("opening connexion")
         self.gs_possibly_resend_init()
         for bitmap in gamesrv.bitmaps.values():
             for icon in bitmap.icons.values():
@@ -180,7 +183,7 @@ class GameSocketHandler(tornado.websocket.WebSocketHandler):
         self.gs_app.updated_client_list()
 
     def on_close(self):
-        print "closing connexion"
+        print("closing connexion")
         gamesrv.clients.remove(self)
         self.gs_closed = True
         for p in self.gs_players.values():
@@ -196,17 +199,17 @@ class GameSocketHandler(tornado.websocket.WebSocketHandler):
     def gs_cmsg_add_player(self, id):
         id = int(id)
         if id in self.gs_players:
-            print "Note: player %d is already playing" % (id,)
+            print("Note: player %d is already playing" % (id,))
             return
         p = gamesrv.game.FnPlayers()[id]
         if p is None:
-            print "Too many players. New player %d refused." % (id,)
+            print("Too many players. New player %d refused." % (id,))
             self.write_message("player_kill`%d" % id)
             return
         if p.isplaying():
-            print "Note: player %d is already played by another client" % (id,)
+            print("Note: player %d is already played by another client" % (id,))
             return
-        print "New player %d" % (id,)
+        print("New player %d" % (id,))
         p._client = self
         p.playerjoin()
         p.setplayername('')
@@ -220,12 +223,12 @@ class GameSocketHandler(tornado.websocket.WebSocketHandler):
         try:
             p = self.gs_players[id]
         except KeyError:
-            print "Note: player %d is not playing" % (id,)
+            print("Note: player %d is not playing" % (id,))
         else:
             p._playerleaves()
 
     def gs_killplayer(self, player):
-        for id, p in self.gs_players.items():
+        for id, p in list(self.gs_players.items()):
             if p is player:
                 if not self.gs_closed:
                     self.write_message("player_kill`%d" % id)
@@ -303,8 +306,19 @@ def main():
     bubbob.bb.BubBobGame('levels/' + options.level)
     app = Application()
     app.listen(options.port)
+
+    if options.upnp:
+        print('Opening port %s via UPNP...' % options.port)
+        upnp = miniupnpc.UPnP()
+        upnp.discoverdelay = 10
+        upnp.discover()
+        upnp.selectigd()
+        upnp.addportmapping(options.port, 'TCP', upnp.lanaddr, options.port, 'BubNBros', '')
+
+    print('Starting game server...')
     GameSocketHandler.gs_app = app
     tornado.ioloop.IOLoop.current().start()
+
 
 if __name__ == "__main__":
     main()

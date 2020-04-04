@@ -1,4 +1,4 @@
-class level##(boarddef.Level):
+class level():
     letter    = 0
     fire      = 0
     lightning = 0

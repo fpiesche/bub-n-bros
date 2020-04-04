@@ -30,7 +30,7 @@ def dump():
             filename, component = ospath.split(filename)
             assert component, "invalid file path"
             path.insert(0, component)
-        print path
+        print(path)
 
 import ext5, ext2, ext7, ext6, ext1, ext4, ext3
 

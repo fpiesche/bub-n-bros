@@ -1,0 +1,2 @@
+tornado>=6.0.4
+miniupnpc>=2.0.2

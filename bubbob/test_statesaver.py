@@ -80,7 +80,7 @@ def test_exhausted_gen():
         yield 5
     g = gfunc()
     for i in g:
-        print i
+        print(i)
     g1 = statesaver.copy(g)
     assert iter(g1) is g1
     py.test.raises(StopIteration, g1.next)

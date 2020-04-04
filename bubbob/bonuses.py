@@ -1027,10 +1027,9 @@ class Potion(RandomBonus):
                                               (PotionBonuses.blue_note,  3000)]),
                ('potion4',             750,  None),
                ]
-    LocalDir = os.path.dirname(__file__) or os.curdir
-    Extensions = [s for s in os.listdir(LocalDir)
+    Extensions = [s for s in os.listdir('.')
                     if s.startswith('ext') and
-                       os.path.isdir(os.path.join(LocalDir, s))]
+                       os.path.isdir(os.path.join('.', s))]
     random.shuffle(Extensions)
     extra_cheat_arg = None
     big = 0
@@ -1708,7 +1707,7 @@ class Chestnut(RandomBonus):
 try:
     import statesaver
 except ImportError:
-    print "'statesaver' module not compiled, no clock bonus"
+    print("'statesaver' module not compiled, no clock bonus")
     Clock = None
 else:
     import new
@@ -1941,8 +1940,8 @@ else:
             random = random_module.Random()
             localrandom = DustStar.localrandom
             self.state = 'pre'
-            self.randombase1 = hash(localrandom.random()) * 914971L
-            self.randombase2 = hash(localrandom.random()) * 914971L
+            self.randombase1 = hash(localrandom.random()) * 914971
+            self.randombase2 = hash(localrandom.random()) * 914971
             self.saved_next = None
             self.saved_last = self
             random.seed(self.randombase1)

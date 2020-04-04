@@ -72,8 +72,8 @@ class Board(Copyable):
     def enter(self, complete=1, inplace=0, fastreenter=False):
         global curboard
         if inplace:
-            print "Re -",
-        print "Entering board", self.num+1
+            print("Re -")
+        print("Entering board", self.num+1)
         self.set_musics()
         # add board walls
         l = self.sprites.setdefault('walls', [])
@@ -439,8 +439,6 @@ def loadmodules(force=0):
     for m in MODULES:
         if os.path.isfile(os.path.join(BB_DIR, m+'.py')):
             modulefiles[m] = m+'.py'
-        elif os.path.isfile(os.path.join(BB_DIR, m, '__init__.py')):
-            modulefiles[m] = os.path.join(m, '__init__.py')
     mtimes = {}
     for m, mfile in modulefiles.items():
         mtimes[m] = os.stat(os.path.join(BB_DIR, mfile)).st_mtime
@@ -451,7 +449,7 @@ def loadmodules(force=0):
         delete = hasattr(sys, 'ST_MTIMES')
         sys.ST_MTIMES = mtimes
         if delete:
-            print "Reloading modules."
+            print("Reloading modules.")
             for m, mfile in modulefiles.items():
                 if m is not None and m in sys.modules:
                     del sys.modules[m]
@@ -473,8 +471,8 @@ def loadmodules(force=0):
         del boards.BoardList[:]
         if levelfilename.lower().endswith('.py'):
             levels = {'__name__': 'bubbob._level_'}
-            print 'Source level file:', levelfilename
-            execfile(os.path.join(BB_DIR, levelfilename), levels)
+            print('Source level file:', levelfilename)
+            exec(open(os.path.join(BB_DIR, levelfilename)).read(), levels)
             if 'GenerateLevels' in levels:
                 levels = levels['GenerateLevels']()
                 if isinstance(levels, list):
@@ -1445,7 +1443,7 @@ def initsubgame(music, displaypoints):
 
 def register(dict):
     global width, height, bwidth, bheight, bheightmod
-    items = dict.items()
+    items = list(dict.items())
     items.sort()
     for name, board in items:
         try:
@@ -1465,8 +1463,8 @@ def register(dict):
             test = B(-1)
             assert test.width == width, "some boards have a different width"
             assert test.height == height, "some boards have a different height"
-    except Exception, e:
-        print 'Caught "%s" in level "%s":' % (e, B.__name__)
+    except Exception as e:
+        print('Caught "%s" in level "%s":' % (e, B.__name__))
         raise e
     bwidth = width*CELL
     bheight = height*CELL

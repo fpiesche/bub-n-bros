@@ -80,7 +80,7 @@ class BubBobGame(gamesrv.Game):
 
     def FnDisconnected(self):
         if self.End == 'gameover':
-            print "resetting the game state"
+            print("resetting the game state")
             self.reset()
 
     def FnPlayers(self):
@@ -94,11 +94,11 @@ class BubBobGame(gamesrv.Game):
         #if self.metaregister:
         #    self.do_updatemetaserver()
         frametime = 0.0
-        for i in xrange(500):
-            import boards
-            for gen in boards.BoardGen[:]:
+        import boards
+        for i in range(500):
+            for gen in boards.BoardGen:
                 try:
-                    frametime += gen.next()
+                    frametime += gen.__next__()
                 except StopIteration:
                     try:
                         boards.BoardGen.remove(gen)
@@ -137,9 +137,9 @@ class BubBobGame(gamesrv.Game):
         if kbd and not [p for p in BubPlayer.PlayerList if p.isplaying()]:
             return 0
         import traceback
-        print "-"*60
+        print("-"*60)
         traceback.print_exc()
-        print "-"*60
+        print("-"*60)
         ## if not kbd:
         ##     try:
         ##         if self.metaserver:
@@ -155,10 +155,10 @@ class BubBobGame(gamesrv.Game):
         import boards
         num = getattr(boards.curboard, 'num', None)
         if self.Quiet:
-            print "Crash recovery! Automatically restarting board %s" % num
+            print("Crash recovery! Automatically restarting board %s" % num)
             import time; time.sleep(2)
         else:
-            print "Correct the problem and leave pdb to restart board %s..."%num
+            print("Correct the problem and leave pdb to restart board %s..."%num)
             import pdb; pdb.post_mortem(sys.exc_info()[2])
         self.openboard(num)
         return 1
@@ -210,8 +210,7 @@ class BubBobGame(gamesrv.Game):
 def setuppath(dirname):
     dir = os.path.abspath(os.path.join(LOCALDIR, os.pardir, dirname))
     if not os.path.isdir(dir):
-        print >> sys.stderr, (
-            '../%s: directory not found ("cvs update -d" ?)' % dirname)
+        print('../%s: directory not found ("cvs update -d" ?)' % dirname, file=sys.stderr)
         sys.exit(1)
     if dir not in sys.path:
         sys.path.insert(0, dir)
@@ -219,29 +218,29 @@ def setuppath(dirname):
 def parse_cmdline(argv):
     # parse command-line
     def usage():
-        print >> sys.stderr, 'usage:'
-        print >> sys.stderr, '  python bb.py'
-##        print >> sys.stderr, '  python bb.py [-w/--webbrowser=no]'
-##        print >> sys.stderr, 'where:'
-##        print >> sys.stderr, '  -w  --webbrowser=no  don''t automatically start web browser'
-        print >> sys.stderr, 'or:'
-        print >> sys.stderr, '  python bb.py [level-file.bin] [-m] [-b#] [-s#] [-l#] [-M#]'
-        print >> sys.stderr, 'with options:'
-        print >> sys.stderr, '  -m  --metaserver  register the server on the Metaserver so anyone can join'
-        print >> sys.stderr, '  -b#  --begin #    start at board number # (default 1)'
-        print >> sys.stderr, '       --start #    synonym for --begin'
-        print >> sys.stderr, '       --final #    end at board number # (default 100)'
-        print >> sys.stderr, '  -s#  --step #     advance board number by steps of # (default 1)'
-        print >> sys.stderr, '  -l#  --lives #    limit the number of lives to #'
-        print >> sys.stderr, '       --extralife #    gain extra life every # points'
-        print >> sys.stderr, '       --limitlives #    max # of lives player can gain in one board'
-        print >> sys.stderr, '  -M#  --monsters # multiply the number of monsters by #'
-        print >> sys.stderr, '                      (default between 1.0 and 2.0 depending on # of players)'
-        print >> sys.stderr, '  -i   --infinite   restart the server at the end of the game'
-        print >> sys.stderr, '  --port LISTEN=#   set fixed tcp port for game server'
-        print >> sys.stderr, '  --port HTTP=#     set fixed tcp port for http server'
-        print >> sys.stderr, '  -h   --help       display this text'
-        #print >> sys.stderr, '  -rxxx record the game in file xxx'
+        print('usage:')
+        print('  python bb.py')
+        print('  python bb.py [-w/--webbrowser=no]')
+        print('where:')
+        print('  -w  --webbrowser=no  don''t automatically start web browser')
+        print('or:')
+        print('  python bb.py [level-file.bin] [-m] [-b#] [-s#] [-l#] [-M#]')
+        print('with options:')
+        print('  -m  --metaserver  register the server on the Metaserver so anyone can join')
+        print('  -b#  --begin #    start at board number # (default 1)')
+        print('       --start #    synonym for --begin')
+        print('       --final #    end at board number # (default 100)')
+        print('  -s#  --step #     advance board number by steps of # (default 1)')
+        print('  -l#  --lives #    limit the number of lives to #')
+        print('       --extralife #    gain extra life every # points')
+        print('       --limitlives #    max # of lives player can gain in one board')
+        print('  -M#  --monsters # multiply the number of monsters by #')
+        print('                      (default between 1.0 and 2.0 depending on # of players)')
+        print('  -i   --infinite   restart the server at the end of the game')
+        print('  --port LISTEN=#   set fixed tcp port for game server')
+        print('  --port HTTP=#     set fixed tcp port for http server')
+        print('  -h   --help       display this text')
+        print('  -rxxx record the game in file xxx')
         sys.exit(1)
 
     try:
@@ -255,11 +254,10 @@ def parse_cmdline(argv):
                              'lives=', 'monsters=', 'infinite', 'help',
                              'extralife=', 'limitlives=', 'final=',
                              'saveurlto=', 'quiet', 'port=', 'makeimages'])
-    except error, e:
-        print >> sys.stderr, 'bb.py: %s' % str(e)
-        print >> sys.stderr
-        usage()
-        
+    except error as e:
+        print('bb.py: %s%s' % (str(e), os.linesep), file=sys.stderr)
+    usage()
+
     options = {}
     #webbrowser = 1
     save_url_to = None

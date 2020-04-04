@@ -22,8 +22,8 @@ def _pnmtopng_convert_ppm_to_png(data, colorkey=None):
 
 def convert_ppm_to_png(data, colorkey=None):
     import png
-    import cStringIO, array
-    f = cStringIO.StringIO(data)
+    import io, array
+    f = io.StringIO(data)
     header = f.readline()
     assert header.rstrip() == 'P6'
     width, height = map(int, f.readline().split())
@@ -37,6 +37,6 @@ def convert_ppm_to_png(data, colorkey=None):
         colorkey = (colorkey & 0xFF, (colorkey >> 8) & 0xFF, colorkey >> 16)
 
     w = png.Writer(width, height, transparent=colorkey)
-    g = cStringIO.StringIO()
+    g = io.BytesIO()
     w.write_array(g, a)
     return g.getvalue()

@@ -258,17 +258,17 @@ class Diamonds:
 
 class Stars:
     # Effect of the book. Kill monsters on contact.
-    blue    = nrange(940,2)
-    yellow  = nrange(942,2)
-    red     = nrange(944,2)
-    green   = nrange(946,2)
-    magenta = nrange(948,2)
-    cyan    = nrange(950,2)
+    blue    = list(nrange(940,2))
+    yellow  = list(nrange(942,2))
+    red     = list(nrange(944,2))
+    green   = list(nrange(946,2))
+    magenta = list(nrange(948,2))
+    cyan    = list(nrange(950,2))
     COLORS  = ['blue', 'yellow', 'red', 'green', 'magenta', 'cyan']
 
 class SpinningBalls:
-    free = nrange(482,4)
-    bubbled = nrange(486,2) # NOT_USED
+    free = list(nrange(482,4))
+    bubbled = list(nrange(486,2)) # NOT_USED
 
 class BigImages:
     cyan_ice   = 10  # Megabonus produced after a wand
@@ -282,14 +282,14 @@ class BigImages:
     red        = 18
     yellow     = 19
     blitz      = 30
-    hurryup    = nrange(31,2)
+    hurryup    = list(nrange(31,2))
 
 class birange:
     def __init__(self, a,b,n):
         self.a = a
         self.n = n
     def __getitem__(self, pn):
-        return range(self.a + 1000*pn, self.a + 1000*pn + self.n)
+        return list(range(self.a + 1000*pn, self.a + 1000*pn + self.n))
 
 class bidict:
     def __init__(self, a,b):

@@ -410,7 +410,8 @@ class DragonBubble(Bubble):
                 hspeed = -hspeed
         self.gen.append(self.throw_bubble(hspeed, special_bubble, (acos,asin)))
 
-    def throw_bubble(self, hspeed, special_bubble=None, (acos,asin)=(1,0)):
+    def throw_bubble(self, hspeed, special_bubble=None, arc=(1,0)):
+        acos, asin = arc
         from monsters import Monster
         nx = self.x
         ny = self.y
@@ -688,7 +689,8 @@ class BonusBubble(Bubble):
         self.move(x, y)
         self.gen = [self.throwing_bubble(hspeed, acossin, self.imgsetter)]
 
-    def throwing_bubble(self, hspeed, (acos,asin), restore_img):
+    def throwing_bubble(self, hspeed, arc, restore_img):
+        acos, asin = arc
         nx = self.x
         ny = self.y
         while abs(hspeed) >= 4.0:

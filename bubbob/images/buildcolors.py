@@ -308,14 +308,13 @@ if __name__ == '__main__':
                 except OSError:
                     pass
                 else:
-                    print 'rm', filename % n
+                    print('rm', filename % n)
         sys.exit()
     else:
-        rebuild = updatecheck ()
-        if 0 in rebuild.values ():
-            print >> sys.stderr, ('%d images up-to-date. '
-                                  'Use -f to force a rebuild or -c to clean.' %
-                                  rebuild.values ().count(0))
+        rebuild = updatecheck()
+        if 0 in rebuild.values():
+            print('%d images up-to-date. Use -f to force a rebuild or -c to clean.' %
+                  rebuild.values().count(0), file=sys.stderr)
         files = [fn for fn, r in rebuild.items () if r]
 
     files.sort ()
