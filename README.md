@@ -1,47 +1,75 @@
-# README #
+# Bub-n-Bros
 
-### Bub-n-Bros ###
+This is a fork of [Armin Rigo's HTML5 port](https://bitbucket.org/arigo/bub-n-bros) of the original
+[Bub's Brothers](http://bub-n-bros.sourceforge.net/), ported to Python 3 since Python 2.x
+is now end-of-life and with plans for other enhancements (see the Issues page).
 
-This is the HTML5 version of the Bub-n-Bros game, a many-players
-version of the original Bubble Bobble game.
+## Requirements
 
+  * Python 3.x (I personally develop and test on Python 3.7). On Windows, I recommend installing
+  [Chocolatey](https://www.chocolatey.org/) to easily install Python 3 (`choco install python`).
 
-### How to run your own server ###
+## Installing
 
-You need to have Python version 2.7 installed, as well as "pip", the
-Python package manager.  (It is recommended to use "virtualenv" as
-well, but not necessary.)
+Download the repository from the *Downloads* section here on the BitBucket repository and extract it
+to a directory of your choice. Open a Terminal window and navigate to this directory
+(on Windows: simply enter `cmd` in the Explorer location bar when viewing the directory).
 
-Install "tornado" by saying "pip install tornado".
+Create a Python virtual environment to run the server in:
 
-Grab the source code here: go to
-https://bitbucket.org/arigo/bub-n-bros/downloads , click on Tags,
-click on one of "zip" or "gz" or "bz2".
+`virtualenv ./venv`
 
-Run "python bb_tornado.py --metaserver=none".
+Activate the virtual environment:
 
-This should start a web server on the local machine, on port 8000,
-serving a game (can be changed with the option --port=NUM).
+`source ./venv/bin/activate` (Linux/macOS)
 
-Visit http://127.0.0.1:8000 in your regular web browser.
+`.\venv\Scripts\activate.bat` (Windows)
 
-The server does not only listen from the local machine: you can also
-add new connections from other machines, as long as you know the IP (or
-maybe the DNS name) of the machine running the server.  (The
-"127.0.0.1" above means "the local machine".)  The clients are purely
-web-based applications; no need to install anything there.  In other
-words a client is any (HTML5-compatible) web browser which connects to
-the server.
+Install the requirements:
 
-Add players by clicking on the dragon of your choice on the left, and
-then pressing four keys (right, left, jump, fire).
+`pip install -f .\requirements.txt`
 
-Any connection supports any number of players: you can add two or even
-three players on the same keyboard, but it becomes crowded and
-keyboards are usually prone to conflicts if a lot of keys are pressed
-simultanously.
+## Running the game
 
-For more options see "python bb_tornato.py --help".  The metaserver is
-a different machine, which is running "python metaserver.py", and
-individual servers show up on the metaserver.  (There is no running
-default metaserver right now.)
+Open a Terminal and activate the virtual environment as above, then simply run:
+
+`python bb_tornado.py --metaserver=none`
+
+This will start a web server on your machine on port 8000 serving a game.
+
+Simply visit http://127.0.0.1:8000 in a web browser to play.
+
+Add players by clicking on the dragon of your choice on the left, and then pressing
+four keys (right, left, jump, fire).
+
+Any connection supports any number of players: you can add two or even three players
+on the same keyboard on each connected computer, but it becomes crowded and keyboards
+are usually prone to conflicts if a lot of keys are pressed simultaneously.
+
+## Common command-line options
+
+`--upnp=True` will automatically forward the game's port on your router so your friends
+on the internet can join.
+
+`--port=8000` allows you to set a custom port.
+
+For more options see `python bb_tornado.py --help`.
+
+## The Metaserver
+
+The metaserver is a server that manages a list of running games so people can view and join
+them from a central location. You can start a metaserver by running `python metaserver.py`.
+
+Individual game servers can then add your metaserver's URL to their `--metaserver` command-line
+to be listed there. There is currently no default metaserver.
+
+## Acknowledgments
+
+  * [Sebastian Wegner](http://www.mcsebi.com/) (original MacOS game "Bub & Bob" which many of the assets in Bub-n-Bros are from)
+  * Armin Rigo ([original Python code](https://bub-n-bros.sourceforge.net) and
+  [HTML5 port](https://bitbucket.org/arigo/bub-n-bros))
+  * [Original Bub-n-Bros contributors](http://bub-n-bros.sourceforge.net/authors.html):
+    * David Gowers (art)
+    * Gio, Odie, Michel-Stéphane, Armin (levels)
+    * Odie, Brachamutanda (special thanks)
+    * IMA Connection (beta testing)
