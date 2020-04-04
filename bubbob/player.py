@@ -771,6 +771,9 @@ class BubPlayer(gamesrv.Player):
             for key, value in self.iconnames.items():
                 icons[key] = images.sprget((flip, value))
 
+    def __hash__(self):
+        return self.pn
+
     def __eq__(self, other):
         try:
             return self.pn == other.pn
