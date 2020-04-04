@@ -18,7 +18,7 @@ define("level", default='CompactLevels.py', type=str,
        help="Levels to play (can also be changed before the game starts)")
 define("metaserver", default="buildbot.pypy.org:8888", type=str,
        help="Metaserver to use, or 'none'")
-define("upnp", default=True, type=bool, help='Whether to open the port via UPNP when launching.')
+define("upnp", default=False, type=bool, help='Whether to open the port via UPNP when launching.')
 define("hostname", default=None, type=str,
        help="Nickname published on the metaserver")
 
