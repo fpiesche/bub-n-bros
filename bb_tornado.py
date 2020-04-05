@@ -13,14 +13,11 @@ import external_tools
 
 from tornado.options import define, options
 
-define("port", default=8000, help="run on the given port", type=int)
-define("level", default='CompactLevels.py', type=str,
-       help="Levels to play (can also be changed before the game starts)")
-define("metaserver", default=None, type=str,
-       help="Metaserver to use, or 'none'")
+define("port", default=8000, help="The network port for the game server.", type=int)
+define("level", default='CompactLevels.py', type=str, help="The default level set to load.")
+define("metaserver", default=None, type=str, help="URL for which metaserver to use, if any.")
 define("upnp", default=False, type=bool, help='Whether to open the port via UPNP when launching.')
-define("hostname", default=None, type=str,
-       help="Nickname published on the metaserver")
+define("hostname", default=None, type=str, help="The nickname for this server on the metaserver.")
 
 
 class Application(tornado.web.Application):
@@ -34,7 +31,7 @@ class Application(tornado.web.Application):
             (r"/cheat/(.+)", CheatHandler),
             (r"favicon.ico", FavIconHandler),
         ]
-        super(Application, self).__init__(handlers, static_path="static")
+        super(Application, self).__init__(handlers, static_path="./static")
         self.periodic_callback = tornado.ioloop.PeriodicCallback(
             self.invoke_periodic_callback, 25)
         self.periodic_callback_is_running = False
@@ -149,7 +146,7 @@ class GameSocketHandler(tornado.websocket.WebSocketHandler):
 
     def gs_start_music(self):
         music_url = (
-            'http://bytebucket.org/arigo/bub-n-bros/raw/default/static/%s')
+            'https://bitbucket.org/fpiesche/bub-n-bros/raw/master/static/%s')
         music = ["music", str(gamesrv.currentmusics[0])]
         for m in gamesrv.currentmusics[1:]:
             music.append(self.gs_static_url(m.filename, '.ogg', music_url))

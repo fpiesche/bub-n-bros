@@ -12,13 +12,8 @@ pipelines:
           - docker
         caches:
           - docker
-        script: # Modify the commands below to build your repository.
-          # Set  and $DOCKER_HUB_PASSWORD as environment variables in repository settings
-          - export IMAGE_NAME=florianpiesche/bubnbros
-
-          # build the Docker image (this will use the Dockerfile in the root of the repo)
-          - docker build -t $IMAGE_NAME:$BITBUCKET_COMMIT -t $IMAGE_NAME:latest .
-          # authenticate with the Docker Hub registry
+        script:
           - docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
-          # push the new Docker image to the Docker registry
-          - docker push $IMAGE_NAME
+          # build the Docker image and push to Docker Hub
+          - docker-compose build
+          - docker-compose push

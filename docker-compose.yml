@@ -1,0 +1,9 @@
+version: '3'
+services:
+  all:
+    image: florianpiesche/bubnbros
+    ports:
+      - "8000:8000"
+    container_name: bubnbros
+    hostname: bubnbros
+    build: .
