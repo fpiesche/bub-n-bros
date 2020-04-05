@@ -1,13 +1,17 @@
 from __future__ import generators
-import random, math, time
-import gamesrv
-import images
+
+import math
+import random
+import time
+
 import boards
 import bubbles
+import images
 from boards import *
 from images import ActiveSprite
-from mnstrmap import GreenAndBlue, LetterBubbles, PlayerBubbles
-from mnstrmap import DigitsMisc
+from mnstrmap import DigitsMisc, GreenAndBlue, LetterBubbles, PlayerBubbles
+
+import gamesrv
 
 KEEPALIVE = 5*60   # seconds
 CheatDontDie = 0
@@ -442,7 +446,7 @@ class Dragon(ActiveSprite):
     def teleport(self, wannago, icons, max_delta_y=CELL):
         #if self.dcap['shield']:
         #    return
-        from bonuses import Bonus, Megabonus
+        from bonuses import Bonus
         best_dx = boards.bwidth
         centerx = self.x + self.ico.w // 2
         basey = (self.y + self.ico.h + 8) & ~15
