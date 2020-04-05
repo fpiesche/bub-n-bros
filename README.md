@@ -1,4 +1,4 @@
-# Bub-n-Bros
+# Bub'n'Bros
 
 This is a fork of [Armin Rigo's HTML5 port](https://bitbucket.org/arigo/bub-n-bros) of the original
 [Bub's Brothers](http://bub-n-bros.sourceforge.net/), ported to Python 3 since Python 2.x
@@ -15,6 +15,20 @@ Please report any issues you find on [the BitBucket Issue tracker](https://bitbu
   [Chocolatey](https://www.chocolatey.org/) to easily install Python 3 (`choco install python`).
 
 ## Installing
+
+### Docker
+
+If you want to run a more persistent server for Bub'n'Bros, there is a Docker image available
+[on Docker Hub as florianpiesche/bubnbros](https://hub.docker.com/repository/docker/florianpiesche/bubnbros)
+both for amd64 PCs and arm32v7 (e.g. for use on a [Raspberry Pi](https://www.raspberrypi.org/)).
+To download and start this, simply run:
+
+```
+docker pull florianpiesche/bubnbros:[amd64|arm32v7]-latest
+docker run -p 8000 florianpiesche/bubnbros
+```
+
+### Manual installation
 
 Download the repository from the *Downloads* section here on the BitBucket repository and extract it
 to a directory of your choice. Open a Terminal window and navigate to this directory
@@ -34,7 +48,7 @@ Install the requirements:
 
 `pip install -f .\requirements.txt`
 
-## Running the game
+#### Running the game
 
 Open a Terminal and activate the virtual environment as above, then simply run:
 
@@ -51,7 +65,7 @@ Any connection supports any number of players: you can add two or even three pla
 on the same keyboard on each connected computer, but it becomes crowded and keyboards
 are usually prone to conflicts if a lot of keys are pressed simultaneously.
 
-## Common command-line options
+#### Common command-line options
 
 `--upnp=True` will automatically forward the game's port on your router so your friends
 on the internet can join.
