@@ -36,7 +36,7 @@ def vflip(w, h, data):
     scanline = w*3
     lines = [data[p:p+scanline] for p in range(0, len(data), scanline)]
     lines.reverse()
-    return ''.join(lines)
+    return ''.join([str(line) for line in lines])
 
 def hflip(w, h, data):
     scanline = w*3
