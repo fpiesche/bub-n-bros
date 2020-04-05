@@ -30,7 +30,7 @@ def cropimage(image, crop_region):
              for p in range(y1*scanline + x1*3,
                             (y1+h1)*scanline + x1*3,
                             scanline)]
-    return w1, h1, ''.join(lines)
+    return w1, h1, ''.join([str(line) for line in lines])
 
 def vflip(w, h, data):
     scanline = w*3
@@ -42,27 +42,27 @@ def hflip(w, h, data):
     scanline = w*3
     lines = [''.join([data[p:p+3] for p in range(p1+scanline-3, p1-3, -3)])
              for p1 in range(0, len(data), scanline)]
-    return ''.join(lines)
+    return ''.join([str(line) for line in lines])
 
 def rotate_cw(w, h, data):
     scanline = w*3
     lastline = len(data) - scanline
     lines = [''.join([data[p:p+3] for p in range(lastline + p1, -1, -scanline)])
              for p1 in range(0, scanline, 3)]
-    return ''.join(lines)
+    return ''.join([str(line) for line in lines])
 
 def rotate_ccw(w, h, data):
     scanline = w*3
     lines = [''.join([data[p:p+3] for p in range(p1, len(data), scanline)])
              for p1 in range(scanline-3, -3, -3)]
-    return ''.join(lines)
+    return ''.join([str(line) for line in lines])
 
 def rotate_180(w, h, data):
     scanline = w*3
     lines = [''.join([data[p:p+3] for p in range(p1+scanline-3, p1-3, -3)])
              for p1 in range(0, len(data), scanline)]
     lines.reverse()
-    return ''.join(lines)
+    return ''.join([str(line) for line in lines])
 
 def makebkgnd(w, h, data):
     scanline = 3*w
@@ -76,7 +76,7 @@ def makebkgnd(w, h, data):
         line = ''.join(line)
         result.append(line)
         result.append(line)
-    return w*2, h*2, ''.join(result)
+    return w*2, h*2, ''.join([str(line) for line in result])
 
 translation_darker = ('\x00\x01' + '\x00'*126 +
                       ''.join([chr(n//4) for n in range(0,128)]))
@@ -163,5 +163,5 @@ def imagezoomer(w, h, data):
 
             # ______________________________
             result.append(revcache[p1])
-    data = ''.join(result)
+    data = ''.join([str(line) for line in result])
     yield (rw, rh, data)
