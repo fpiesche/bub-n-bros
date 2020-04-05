@@ -10,6 +10,8 @@ pipelines:
     - step:
         services:
           - docker
+        caches:
+          - docker
         script: # Modify the commands below to build your repository.
           # Set  and $DOCKER_HUB_PASSWORD as environment variables in repository settings
           - export IMAGE_NAME=florianpiesche/bubnbros
