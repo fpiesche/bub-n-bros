@@ -18,5 +18,5 @@ pipelines:
 
           # build and push image
           - export IMAGE_NAME=florianpiesche/bubnbros
-          - docker build -t $IMAGE_NAME:$BITBUCKET_COMMIT -t $IMAGE_NAME:latest .
+          - docker build -t $IMAGE_NAME:$BITBUCKET_COMMIT -t $IMAGE_NAME:amd64-latest .
           - docker push $IMAGE_NAME
