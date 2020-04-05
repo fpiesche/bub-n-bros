@@ -6,5 +6,7 @@ if [ $# -eq 0 ]
     exit 1
 fi
 
-docker build --build-arg BASE_ARCH=$1 -t my_image:$1-latest .
+echo "Building Docker image florianpiesche/bubnbros:$1-latest."
+docker build --build-arg BASE_ARCH=$1 -t florianpiesche/bubnbros:$1-latest .
+echo "Pushing Docker image florianpiesche/bubnbros:$1-latest."
 docker push florianpiesche/bubnbros
