@@ -273,7 +273,7 @@ class GameSocketHandler(tornado.websocket.WebSocketHandler):
         self.write_message("changelevels`%s" % msg)
 
     def gs_cmsg_change_levels(self, lvl):
-        lvl = lvl.encode('utf-8')
+        print('Received request to change level to %s' % lvl)
         levels = gamesrv.game.FnChangeLevels
         if levels and lvl in levels:
             gamesrv.game.levelfile = 'levels/' + lvl
@@ -309,7 +309,11 @@ def main():
         upnp.discoverdelay = 10
         upnp.discover()
         upnp.selectigd()
-        upnp.addportmapping(options.port, 'TCP', upnp.lanaddr, options.port, 'BubNBros', '')
+        try:
+            upnp.addportmapping(options.port, 'TCP', upnp.lanaddr, options.port, 'BubNBros', '')
+        except Exception:
+            print('Failed to add UPNP mapping for port %s! Game may not be accessible from outside the LAN.'
+                  % options.port)
 
     print('Starting game server...')
     GameSocketHandler.gs_app = app
