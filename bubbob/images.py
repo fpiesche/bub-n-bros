@@ -331,7 +331,7 @@ def computebiggericon(ico, bigger={}):
         bigger[ico] = None, pixmap.imagezoomer(*ico.getimage())
         return None
     if computing is not None:
-        result = computing.next() or computing.next() or computing.next()
+        result = computing.__next__() or computing.__next__() or computing.__next__()
         if not result:
             return None   # still computing
         w, h, data = result
