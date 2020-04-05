@@ -1,7 +1,7 @@
 version: '3'
 services:
   all:
-    image: florianpiesche/bubnbros
+    image: florianpiesche/bubnbros:${ARCH}-latest
     ports:
       - "8000:8000"
     container_name: bubnbros
