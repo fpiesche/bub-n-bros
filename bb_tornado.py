@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import miniupnpc
 import socket
 from uuid import uuid1
 import tornado.ioloop
@@ -305,6 +304,7 @@ def main():
 
     if options.upnp:
         print('Opening port %s via UPNP...' % options.port)
+        import miniupnpc
         upnp = miniupnpc.UPnP()
         upnp.discoverdelay = 10
         upnp.discover()
